@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar - Sabor Express</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/user/login.css?v=2">
+</head>
+<body>
+<div class="login-container">
+  <div class="login-box">
+    <h1><i class="fa-solid fa-burger"></i> Sabor Express</h1>
+    <div class="tabs">
+      <button id="tab-login" class="active" onclick="trocarTab('login')">Entrar</button>
+      <button id="tab-cadastro" onclick="trocarTab('cadastro')">Cadastrar</button>
+    </div>
+
+    <!-- LOGIN -->
+    <form id="form-login" class="form active">
+      <input type="email" id="login-email" placeholder="Seu e-mail" required>
+      <input type="password" id="login-senha" placeholder="Sua senha" maxlength="128" required>
+      <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> Entrar</button>
+      <button type="button" id="btn-redefinir-senha">
+        <i class="fa-regular fa-envelope"></i>
+        <span>Esqueci minha senha</span>
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </button>
+    </form>
+
+    <!-- CADASTRO -->
+    <form id="form-cadastro" class="form">
+      <input type="text" id="cad-nome" placeholder="Nome completo" required>
+      <input type="email" id="cad-email" placeholder="E-mail" required>
+      <input type="password" id="cad-senha" placeholder="Crie uma senha (mín. 8 caracteres)" minlength="8" maxlength="128" required>
+      <input type="text" id="cad-telefone" placeholder="Telefone (11) 99999-9999">
+      <h4><i class="fa-solid fa-location-dot"></i> Endereço de entrega</h4>
+      <div class="row">
+        <input type="text" id="cad-rua" placeholder="Rua" style="flex:3" required>
+        <input type="text" id="cad-numero" placeholder="Nº" style="flex:1" required>
+      </div>
+      <input type="text" id="cad-bairro" placeholder="Bairro - Santa Isabel" required>
+      <button type="submit"><i class="fa-solid fa-user-plus"></i> Criar conta</button>
+    </form>
+
+    <a href="../index.html" class="voltar"><i class="fa-solid fa-arrow-left"></i> Voltar ao cardápio</a>
+  </div>
+</div>
+<script type="module" src="/JS/login.js"></script></body>
+</html>

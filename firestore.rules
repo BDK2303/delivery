@@ -1,0 +1,198 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Assumed data model:
+    // users/{uid}: required uid (immutable string), name (string <=100),
+    // email (valid string <=254, immutable), phone (string <=30),
+    // street (string <=120), number (string <=20), neighborhood (string <=100),
+    // and createdAt (timestamp, immutable). Contains private profile data.
+    // admins/{uid}: server-provisioned uid and createdAt; clients cannot write.
+    // products/{productId}: name (1-100 chars), category (lanches|bebidas),
+    // description (<=1000 chars), price (0-10000), image (empty or https URL
+    // <=2048 chars), highlighted/active (booleans), createdAt/updatedAt
+    // (timestamps). Active products are publicly readable.
+    // orders/{orderId}: userId, deliveryAddress (<=300 chars), paymentMethod
+    // (Pix|Cartao|Dinheiro), deliveryFee (5), status (pendente|confirmado),
+    // createdAt (timestamp). Owner and admins may read; admins confirm orders.
+    // orders/{orderId}/items/{itemId}: productId, name, category, price,
+    // quantity (1-50), observation (<=300 chars), validated against an active
+    // product. Owner and admins may read; items cannot be changed after create.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function uidUnchanged() {
+      return request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return request.resource.data.uid == resource.data.uid
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['uid']);
+    }
+
+    function validText(value, maxLength) {
+      return value is string && value.size() <= maxLength;
+    }
+
+    function validEmail(value) {
+      return value is string
+        && value.size() <= 254
+        && value.matches('^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasOnly([
+          'uid', 'name', 'email', 'phone', 'street', 'number',
+          'neighborhood', 'createdAt'
+        ])
+        && data.keys().hasAll([
+          'uid', 'name', 'email', 'phone', 'street', 'number',
+          'neighborhood', 'createdAt'
+        ])
+        && data.uid is string
+        && validText(data.name, 100)
+        && validEmail(data.email)
+        && validText(data.phone, 30)
+        && validText(data.street, 120)
+        && validText(data.number, 20)
+        && validText(data.neighborhood, 100)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasOnly([
+          'name', 'category', 'description', 'price', 'image',
+          'highlighted', 'active', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasAll([
+          'name', 'category', 'description', 'price', 'image',
+          'highlighted', 'active', 'createdAt', 'updatedAt'
+        ])
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.category in ['lanches', 'bebidas']
+        && validText(data.description, 1000)
+        && data.price is number && data.price >= 0 && data.price <= 10000
+        && validText(data.image, 2048)
+        && (data.image == '' || data.image.matches('^https://.*'))
+        && data.highlighted is bool
+        && data.active is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasOnly([
+          'userId', 'deliveryAddress', 'paymentMethod', 'deliveryFee',
+          'status', 'createdAt'
+        ])
+        && data.keys().hasAll([
+          'userId', 'deliveryAddress', 'paymentMethod', 'deliveryFee',
+          'status', 'createdAt'
+        ])
+        && data.userId is string
+        && validText(data.deliveryAddress, 300)
+        && data.paymentMethod in ['Pix', 'Cartao', 'Dinheiro']
+        && data.deliveryFee is number && data.deliveryFee == 5
+        && data.status == 'pendente'
+        && data.createdAt is timestamp
+        && data.createdAt == request.time;
+    }
+
+    function isValidOrderItem(data, productId) {
+      let productPath = /databases/$(database)/documents/products/$(productId);
+      return data.keys().hasOnly([
+          'productId', 'name', 'category', 'price', 'quantity', 'observation'
+        ])
+        && data.keys().hasAll([
+          'productId', 'name', 'category', 'price', 'quantity', 'observation'
+        ])
+        && data.productId == productId
+        && data.name is string
+        && data.category in ['lanches', 'bebidas']
+        && data.price is number && data.price >= 0 && data.price <= 10000
+        && data.quantity is int && data.quantity >= 1 && data.quantity <= 50
+        && validText(data.observation, 300)
+        && exists(productPath)
+        && get(productPath).data.active == true
+        && get(productPath).data.name == data.name
+        && get(productPath).data.category == data.category
+        && get(productPath).data.price == data.price;
+    }
+
+    match /users/{uid} {
+      allow get: if isOwner(uid) || isAdmin();
+      allow list: if false;
+      allow create: if isOwner(uid)
+        && uidUnchanged()
+        && isValidUser(request.resource.data)
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.createdAt == request.time;
+      allow update: if isOwner(uid)
+        && uidNotModified()
+        && isValidUser(request.resource.data)
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if false;
+    }
+
+    match /admins/{uid} {
+      allow get: if isOwner(uid) || isAdmin();
+      allow list, create, update, delete: if false;
+    }
+
+    match /products/{productId} {
+      allow get, list: if isAdmin() || resource.data.active == true;
+      allow create: if isAdmin()
+        && isValidProduct(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isAdmin()
+        && isValidProduct(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      allow get, list: if isAdmin() || isOwner(resource.data.userId);
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && isValidOrder(request.resource.data);
+      allow update: if isAdmin()
+        && resource.data.status == 'pendente'
+        && request.resource.data.status == 'confirmado'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow delete: if false;
+
+      match /items/{itemId} {
+        function parentOrderPath() {
+          return /databases/$(database)/documents/orders/$(orderId);
+        }
+
+        function orderOwner() {
+          return isOwner(get(parentOrderPath()).data.userId);
+        }
+
+        allow get, list: if isAdmin() || orderOwner();
+        allow create: if isAuthenticated()
+          && !exists(parentOrderPath())
+          && getAfter(parentOrderPath()).data.userId == request.auth.uid
+          && isValidOrderItem(request.resource.data, request.resource.data.productId);
+        allow update, delete: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

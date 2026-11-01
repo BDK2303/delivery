@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrinho - Sabor Express</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background: #121212;
+        color: #fff;
+        min-height: 100vh;
+      }
+      .header-shop {
+        max-width: 1448px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header-shop h1 {
+        font-size: 22px;
+        font-weight: 700;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .header-shop h1 i {
+        color: #ff6b2b;
+      }
+      .header-shop a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: #1e1e1e;
+        border: 1px solid #2a2a2a;
+        padding: 10px 16px;
+        border-radius: 12px;
+      }
+      .header-shop a:hover {
+        background: #232323;
+      }
+      .shop-container {
+        max-width: 1448px;
+        margin: 0 auto;
+        padding: 0 20px 40px;
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 20px;
+      }
+
+      /* LISTA */
+      .carrinho-lista {
+        background: #1e1e1e;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #232323;
+      }
+      .carrinho-lista h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .carrinho-lista h2 span {
+        background: #ff6b2b;
+        color: #fff;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+      }
+      .item {
+        display: flex;
+        gap: 16px;
+        background: #232323;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 12px;
+        align-items: center;
+        border: 1px solid #2a2a2a;
+      }
+      .item img {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: #2a2a2a;
+      }
+      .item-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .item-info h3 {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .item-info p {
+        font-size: 12px;
+        color: #aaa;
+        margin: 4px 0;
+        line-height: 1.4;
+      }
+      .item-info .preco {
+        color: #ffb800;
+        font-weight: 700;
+        font-size: 14px;
+        margin-top: 6px;
+      }
+      .qtd {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #121212;
+        border-radius: 20px;
+        padding: 5px 10px;
+        border: 1px solid #2a2a2a;
+      }
+      .qtd button {
+        background: #ff6b2b;
+        border: none;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .qtd span {
+        font-weight: 600;
+        min-width: 18px;
+        text-align: center;
+      }
+      .item .remover {
+        background: #1e1e1e;
+        border: 1px solid #333;
+        color: #666;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      /* RESUMO - AGORA DARK NA MESMA PALETA */
+      .resumo {
+        background: #1e1e1e;
+        color: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+        border: 1px solid #232323;
+      }
+      .resumo h2 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .linha {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        margin: 10px 0;
+        color: #aaa;
+      }
+      .linha b {
+        color: #fff;
+      }
+      .linha.total {
+        font-weight: 700;
+        font-size: 18px;
+        border-top: 1px solid #2a2a2a;
+        padding-top: 14px;
+        margin-top: 16px;
+        color: #fff;
+      }
+      .linha.total span:last-child {
+        color: #ff6b2b;
+      }
+
+      /* ENDEREÇO - DARK SEM ACINZENTADO */
+      .endereco-edit {
+        background: #232323;
+        padding: 14px;
+        border-radius: 12px;
+        margin: 18px 0;
+        border: 1px solid #2a2a2a;
+        width: 100%;
+        overflow: hidden;
+      }
+      .endereco-edit h4 {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        color: #888;
+        letter-spacing: 0.5px;
+      }
+      .endereco-linha {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+      }
+      .endereco-linha input,
+      #edit-bairro {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 13px;
+        color: #fff;
+        outline: none;
+        background: #121212;
+      }
+      .endereco-linha #edit-rua {
+        flex: 3;
+      }
+      .endereco-linha #edit-numero {
+        flex: 1;
+        max-width: 80px;
+      }
+      #edit-bairro {
+        margin-top: 8px;
+      }
+      .endereco-linha input:focus,
+      #edit-bairro:focus {
+        border-color: #ff6b2b;
+      }
+      .endereco-edit small {
+        font-size: 10px;
+        color: #666;
+        margin-top: 8px;
+        display: block;
+      }
+
+      .pagamento {
+        margin: 20px 0;
+      }
+      .pagamento h4 {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        color: #888;
+        letter-spacing: 0.5px;
+      }
+      .pag-opcoes {
+        display: flex;
+        gap: 8px;
+      }
+      .pag-opcoes button {
+        flex: 1;
+        background: #232323;
+        border: 1px solid #333;
+        border-radius: 12px;
+        padding: 12px 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        color: #aaa;
+        transition: 0.2s;
+      }
+      .pag-opcoes button i {
+        font-size: 16px;
+      }
+      .pag-opcoes button.active {
+        border-color: #ff6b2b;
+        background: #2a1d18;
+        color: #ff6b2b;
+      }
+
+      .btn-finalizar {
+        width: 100%;
+        background: #ff6b2b;
+        color: #fff;
+        border: none;
+        padding: 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+        transition: 0.2s;
+      }
+      .btn-finalizar:hover {
+        background: #e05e24;
+      }
+      .btn-finalizar:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* CARD DE STATUS DO PEDIDO - CLIENTE VÊ APÓS CONFIRMAÇÃO ADM */
+      .status-pedido {
+        display: none;
+        background: linear-gradient(135deg, #1e1e1e, #232323);
+        border: 1px solid #ff6b2b;
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      .status-pedido.show {
+        display: block;
+      }
+      .status-pedido.confirmado {
+        border-color: #22c55e;
+      }
+      .status-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .status-header i {
+        font-size: 20px;
+      }
+      .status-header.pendente i {
+        color: #ff6b2b;
+      }
+      .status-header.confirmado i {
+        color: #22c55e;
+      }
+      .status-lista {
+        font-size: 13px;
+        color: #aaa;
+        line-height: 1.8;
+      }
+      .status-lista b {
+        color: #fff;
+      }
+      .prazo {
+        font-size: 22px;
+        font-weight: 800;
+        color: #ff6b2b;
+        margin-top: 8px;
+      }
+      .prazo.confirmado {
+        color: #22c55e;
+      }
+
+      .vazio {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+      }
+      @media (max-width: 900px) {
+        .shop-container {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .resumo {
+          position: static;
+        }
+      }
+
+      html {
+        min-width: 320px;
+        overflow-x: hidden;
+      }
+      body {
+        overflow-x: hidden;
+      }
+      .header-shop,
+      .shop-container {
+        width: 100%;
+        min-width: 0;
+      }
+      .header-shop {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: clamp(12px, 4vw, 20px);
+      }
+      .header-shop h1 {
+        min-width: 0;
+        font-size: clamp(18px, 4vw, 22px);
+      }
+      .shop-container {
+        grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+        padding: 0 clamp(12px, 4vw, 20px) 32px;
+      }
+      .carrinho-lista,
+      .resumo {
+        min-width: 0;
+      }
+      .item {
+        flex-wrap: wrap;
+      }
+      .item-info {
+        overflow-wrap: anywhere;
+      }
+      .linha {
+        gap: 12px;
+      }
+      .linha > :last-child {
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
+      .pag-opcoes {
+        flex-wrap: wrap;
+      }
+      .pag-opcoes button {
+        min-width: 0;
+      }
+      .status-pedido,
+      .status-lista {
+        overflow-wrap: anywhere;
+      }
+
+      @media (max-width: 900px) {
+        .shop-container {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .header-shop,
+        .shop-container {
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+        .header-shop a {
+          min-height: 42px;
+          padding: 10px 12px;
+        }
+        .carrinho-lista,
+        .resumo {
+          padding: 16px;
+        }
+        .item {
+          display: grid;
+          grid-template-columns: 64px minmax(0, 1fr) auto;
+          gap: 10px;
+          align-items: start;
+          padding: 12px;
+        }
+        .item img {
+          width: 64px;
+          height: 64px;
+          grid-row: 1 / span 2;
+        }
+        .item-info {
+          grid-column: 2 / 4;
+        }
+        .item .qtd {
+          grid-column: 2;
+          justify-self: start;
+        }
+        .item .remover {
+          grid-column: 3;
+          grid-row: 2;
+          justify-self: end;
+        }
+        .endereco-linha {
+          min-width: 0;
+        }
+        .endereco-linha input {
+          min-width: 0;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .header-shop {
+          justify-content: center;
+        }
+        .endereco-linha {
+          flex-direction: column;
+        }
+        .endereco-linha #edit-numero {
+          max-width: none;
+        }
+        .pag-opcoes button {
+          padding: 10px 4px;
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-shop">
+      <h1><i class="fa-solid fa-burger"></i> Sabor Express</h1>
+      <a href="/"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+      <button type="button" id="btn-sair">Sair</button>
+    </div>
+
+    <div class="shop-container">
+      <div class="carrinho-lista">
+        <h2><i class="fa-solid fa-bag-shopping"></i> Seus itens <span id="quantidade-itens">0</span></h2>
+        <div id="lista-itens"></div>
+      </div>
+
+      <div class="resumo">
+        <h2>Resumo do Pedido</h2>
+        <div class="linha">
+          <span>Subtotal</span><b id="subtotal">R$ 0,00</b>
+        </div>
+        <div class="linha"><span>Taxa de entrega</span><b id="taxa">R$ 5,00</b></div>
+        <div class="linha total">
+          <span>Total</span><span id="total">R$ 0,00</span>
+        </div>
+
+        <div class="endereco-edit">
+          <h4><i class="fa-solid fa-location-dot"></i> Endereço de entrega</h4>
+          <div class="endereco-linha">
+            <input type="text" id="edit-rua" placeholder="Rua" />
+            <input type="text" id="edit-numero" placeholder="Nº" />
+          </div>
+          <input
+            type="text"
+            id="edit-bairro"
+            placeholder="Bairro - Santa Isabel, SP"
+          />
+          <small>O endereço será salvo junto ao pedido.</small>
+        </div>
+
+        <div class="pagamento">
+          <h4>Forma de Pagamento</h4>
+          <div class="pag-opcoes">
+            <button class="active" data-pag="Pix">
+              <i class="fa-brands fa-pix"></i> Pix
+            </button>
+            <button data-pag="Cartao">
+              <i class="fa-solid fa-credit-card"></i> Cartão
+            </button>
+            <button data-pag="Dinheiro">
+              <i class="fa-solid fa-money-bill"></i> Dinheiro
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-finalizar" id="btn-finalizar">
+          <i class="fa-solid fa-bolt"></i> Finalizar Pedido
+        </button>
+        <p id="msg" role="status" aria-live="polite"></p>
+
+        <!-- APARECE QUANDO ADM CONFIRMA -->
+        <div class="status-pedido" id="status-pedido">
+          <div class="status-header" id="status-header">
+            <i class="fa-solid fa-clock"></i>
+            <h3 id="status-titulo">Pedido Enviado</h3>
+          </div>
+          <div class="status-lista" id="status-lista"></div>
+          <div class="prazo" id="status-prazo"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/JS/shop.js"></script>
+  </body>
+</html>

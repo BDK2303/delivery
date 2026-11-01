@@ -1,0 +1,38 @@
+{
+  "hosting": {
+    "public": "public/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/carrinho",
+        "destination": "/user/shop.html"
+      },
+      {
+        "source": "/login",
+        "destination": "/user/login.html"
+      },
+      {
+        "source": "/adm",
+        "destination": "/adm/index.html"
+      },
+      {
+        "source": "/adm/pedidos",
+        "destination": "/adm/pedidos.html"
+      }
+    ]
+  },
+  "firestore": {
+    "database": "sabor-express",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true
+    }
+  }
+}

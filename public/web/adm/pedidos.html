@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedidos - ADM Sabor Express</title>
+  <link rel="stylesheet" href="../adm/CSS/pedidos.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+
+  <div class="adm-bar">
+    <div class="adm-bar-left"><i class="fa-solid fa-receipt"></i> PEDIDOS - Sabor Express</div>
+    <div class="adm-bar-right">
+      <a href="index.html"><i class="fa-solid fa-burger"></i> Cardápio</a>
+      <button id="btn-atualizar-pedidos"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+      <button id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+    </div>
+  </div>
+
+  <main class="pedidos-container">
+    <p class="pedidos-retencao">Os pedidos ficam visíveis nesta tela por 24 horas após a criação.</p>
+    <div class="filtros">
+      <button class="filtro active" data-status="todos">Todos <span id="count-todos">0</span></button>
+      <button class="filtro" data-status="pendente">Pendentes <span id="count-pendente">0</span></button>
+      <button class="filtro" data-status="confirmado">Confirmados <span id="count-confirmado">0</span></button>
+    </div>
+
+    <div id="lista-pedidos" class="lista-pedidos">
+      <p class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Carregando pedidos do Cloud Firestore...</p>
+    </div>
+  </main>
+
+  <script type="module" src="../adm/JS/pedidos.js"></script>
+</body>
+</html>

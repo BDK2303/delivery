@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADM - Sabor Express</title>
+  <link rel="stylesheet" href="../adm/CSS/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body style="margin:0; padding:0; background-color:#f5f5f5">
+
+  <!-- BARRA ADM -->
+  <div class="adm-bar">
+    <div class="adm-bar-left"><i class="fa-solid fa-shield-halved"></i> PAINEL ADM - Logado como <b id="adm-nome">Admin</b></div>
+    <div class="adm-bar-right">
+      <button onclick="abrirModalProduto()"><i class="fa-solid fa-plus"></i> Novo Produto</button>
+      <button onclick="window.location.href='/adm/pedidos'"><i class="fa-solid fa-receipt"></i> Ver Pedidos</button>
+      <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+    </div>
+  </div>
+
+  <header>
+    <img src="https://cdn.fbsbx.com/v/t65.102178-21/856077139_1012368571877407_587288153778058480_n.jpg/sabor_express_laranja.png?_nc_ht=cdn.fbsbx.com&_nc_ohc=87vqt9zjQVIQ7kNvwG3xZOO&sdl=0&ccb=14-4&oh=00_AQPzHsfISpH0oII-HUC7avPAVyVkhM6qKr46AePWFDfmPw&oe=6AFC7A50&_nc_sid=4ee932" class="logo" style="width:130px; margin:0" />
+    <h1 class="nome"><strong>Sabor <br />Express</strong></h1>
+    <li class="transport">
+      <a href="#">Home</a>
+      <a href="#">Cardápio</a>
+      <a href="#">Contato</a>
+    </li>
+    <li class="icons"></li>
+    <a href="#"><i class="fa-solid fa-magnifying-glass icon"></i></a>
+    <a href="/login"><i class="fa-solid fa-user icon"></i></a>
+    <a href="/carrinho" aria-label="Abrir carrinho"><i class="fa-solid fa-cart-shopping icon"></i></a>
+  </header>
+
+  <main class="principais">
+    <section class="alta">
+      <article>
+        <img src="" class="lanche-em-alta" id="img-alta">
+        <div class="info-alta">
+          <h3 id="nome-alta"><strong>Lanche em alta</strong></h3>
+          <h5>O mais pedido da semana</h5>
+          <p id="desc-alta"></p>
+          <button class="btn-shop-alta">Pedir Agora</button>
+          <div class="avaliacao">
+            <div class="estrelas">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+            <span>4.9 • 1.2k avaliações</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="cardapio">
+      <h1 class="cardapio">Cardápio <span style="font-size:12px;background:#FF6B2B;color:#fff;padding:4px 10px;border-radius:20px">MODO ADM - clique em editar</span></h1>
+      <h2 class="lanches">lanches</h2>
+      <div class="lanche-box" id="lanche-box"></div>
+
+      <h2 class="lanches cardapio">Bebidas</h2>
+      <div class="lanche-box bebida-box">
+        <div class="produtos-box" id="bebida-box"></div>
+      </div>
+    </section>
+
+    <footer id="contato" class="contatos">
+      <div class="contatos-container">
+        <div class="contatos-brand">
+          <h3><i class="fa-solid fa-burger"></i> Sabor Express</h3>
+          <p>Entregando felicidade em forma de lanche<br>desde 2020 - Santa Isabel, SP</p>
+        </div>
+        <div class="contatos-bloco">
+          <h4>Peça Agora</h4>
+          <a href="#"><i class="fa-brands fa-whatsapp"></i> (11) 99999-9999</a>
+          <a href="#"><i class="fa-solid fa-phone"></i> (11) 99999-9999</a>
+        </div>
+        <div class="contatos-bloco">
+          <h4>Onde Estamos</h4>
+          <p><i class="fa-solid fa-location-dot"></i> Rua das Palmeiras, 123</p>
+          <p>Santa Isabel - SP | CEP 07500-000</p>
+          <p><i class="fa-regular fa-clock"></i> Seg - Dom: 18h às 23h30</p>
+        </div>
+        <div class="contatos-bloco">
+          <h4>Nos Siga</h4>
+          <div class="social">
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
+          <p class="avaliacao-footer"><i class="fa-solid fa-star"></i> 4.9 no iFood</p>
+        </div>
+      </div>
+      <div class="contatos-copy">
+        <p>© 2026 Sabor Express - Todos os direitos reservados</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- MODAL ADD/EDIT PRODUTO -->
+  <div class="modal-overlay" id="modal-produto">
+    <div class="modal">
+      <h3 id="modal-titulo"><i class="fa-solid fa-plus"></i> Novo Produto</h3>
+      <input type="hidden" id="edit-id">
+      <label>Nome</label>
+      <input type="text" id="m-nome" placeholder="X-Clássico Supreme">
+      <label>Categoria</label>
+      <select id="m-categoria">
+        <option value="lanches">Lanches</option>
+        <option value="bebidas">Bebidas</option>
+        <option value="alta">Lanche em Alta (Destaque)</option>
+      </select>
+      <label>Componentes / Descrição</label>
+      <textarea id="m-componentes" rows="3" placeholder="Pão brioche, 180g, cheddar..."></textarea>
+      <label>Valor R$</label>
+      <input type="number" step="0.01" id="m-valor" placeholder="28.90">
+      <label>URL da Imagem</label>
+      <input type="text" id="m-imagem" placeholder="https://...">
+      <div class="modal-checks">
+        <label><input type="checkbox" id="m-destaque"> Destaque?</label>
+        <label><input type="checkbox" id="m-ativo" checked> Ativo</label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-save" onclick="salvarProduto()">Salvar</button>
+        <button class="btn-cancel" onclick="fecharModalProduto()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../adm/JS/admin.js"></script>
+</body>
+</html>
